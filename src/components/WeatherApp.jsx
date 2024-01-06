@@ -21,7 +21,6 @@ const WeatherApp = () => {
     try {
       const response = await fetch(`${basicUrl}?q=${city}&appid=${apiKey}`);
       const data = await response.json();
-      console.log(data);
       setWeatherData(data);
     } catch (error) {
       console.log(error);

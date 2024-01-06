@@ -1,8 +1,9 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import { useMapEvent } from "react-leaflet/hooks";
 import "../styles/MapView.css";
 import { useEffect, useRef, useState } from "react";
+import Markers from "./Markers.jsx";
 
 const SetViewOnChange = ({ animateRef }) => {
   const map = useMapEvent("click", (e) => {
@@ -29,9 +30,7 @@ const MapView = ({ name, lat, lon }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={position}>
-        <Popup>{name}</Popup>
-      </Marker>
+      <Markers name={name} position={position} />
       <SetViewOnChange animateRef={animateRef} />
     </MapContainer>
   );
