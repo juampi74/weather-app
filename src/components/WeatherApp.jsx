@@ -11,7 +11,7 @@ const WeatherApp = () => {
   const handleCityChange = (e) => {
     setCity(e.target.value);
   };
-  
+
   const onSubmit = (e) => {
     e.preventDefault();
     if (city.trim()) fetchWeather();
@@ -20,8 +20,12 @@ const WeatherApp = () => {
   const fetchWeather = async () => {
     try {
       const response = await fetch(`${basicUrl}?q=${city}&appid=${apiKey}`);
-      const data = await response.json();
-      setWeatherData(data);
+      if (response.status === 404) {
+        setWeatherData("City not found! Please, check your spelling...");
+      } else {
+        const data = await response.json();
+        setWeatherData(data);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -30,25 +34,37 @@ const WeatherApp = () => {
   return (
     <div className="container mt-3">
       <h1>Weather App</h1>
-      <form onSubmit={onSubmit} className="d-flex align-items-center justify-content-between">
-        <input type="text" value={city} onChange={handleCityChange} className="form-control" />
-        <button type="submit" className="btn btn-primary mx-2">Search</button>
+      <form
+        onSubmit={onSubmit}
+        className="d-flex align-items-center justify-content-between"
+      >
+        <input
+          type="text"
+          value={city}
+          onChange={handleCityChange}
+          className="form-control"
+          placeholder="Enter a City..."
+        />
+        <button type="submit" className="btn btn-primary mx-2">
+          Search
+        </button>
       </form>
-      {weatherData ? (
-        <div className=" mt-3">
+      {weatherData && typeof weatherData !== "string" ? (
+        <div className="mt-3">
           <h2>
             {weatherData.name} ({weatherData.sys.country})
           </h2>
-          <p className="lead">{`Temperature: ${(weatherData.main.temp - 273.15).toFixed(
-            1
-          )}°C (RealFeel: ${(weatherData.main.feels_like - 273.15).toFixed(
-            1
-          )}°C)`}</p>
+          <p className="lead">{`Temperature: ${(
+            weatherData.main.temp - 273.15
+          ).toFixed(1)}°C (RealFeel: ${(
+            weatherData.main.feels_like - 273.15
+          ).toFixed(1)}°C)`}</p>
           <p className="lead">Humidity: {`${weatherData.main.humidity}%`}</p>
           <p className="lead">Pressure: {`${weatherData.main.pressure} hPa`}</p>
           <div className="d-flex align-items-center">
             <p className="lead mb-0">
-              Condition: {`${weatherData.weather[0].description
+              Condition:{" "}
+              {`${weatherData.weather[0].description
                 .charAt(0)
                 .toUpperCase()}${weatherData.weather[0].description.slice(1)}`}
             </p>
@@ -63,8 +79,13 @@ const WeatherApp = () => {
               lon={weatherData.coord.lon}
             />
           </div>
+          <div className="my-2">
+            <h5>Press the marker in order to travel around the world!</h5>
+          </div>
         </div>
-      ) : null}
+      ) : (
+        <h2 className="mt-3">{weatherData}</h2>
+      )}
     </div>
   );
 };
